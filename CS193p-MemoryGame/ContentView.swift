@@ -8,24 +8,8 @@
 
 import SwiftUI
 
-struct CardView: View {
-    var card: MemoryGame<String>.Card
-
-    var body: some View {
-        ZStack {
-            if card.isFaceUp {
-                RoundedRectangle(cornerRadius: 10).fill(Color.white)
-                RoundedRectangle(cornerRadius: 10).stroke(lineWidth: 2.0)
-                Text(card.content).font(.largeTitle)
-            } else {
-                RoundedRectangle(cornerRadius: 10).fill(Color.secondary)
-            }
-        }
-    }
-}
-
 struct ContentView: View {
-    var gameViewModel: EmojiMemoryGame
+    @ObservedObject var gameViewModel: EmojiMemoryGame
 
     var body: some View {
         VStack {
@@ -37,6 +21,33 @@ struct ContentView: View {
         }
         .padding()
         .foregroundColor(.secondary)
+    }
+}
+
+struct CardView: View {
+    var card: MemoryGame<String>.Card
+
+    let cornerRadius: CGFloat = 10
+    let edgeLineWidth: CGFloat = 2
+    let iconFontScaleFactor: CGFloat = 0.6
+
+    var body: some View {
+        GeometryReader(content: {geometry in
+            self.body(for: geometry.size)
+        })
+    }
+
+    func body(for size: CGSize) -> some View {
+        ZStack {
+            if card.isFaceUp {
+                RoundedRectangle(cornerRadius: cornerRadius).fill(Color.white)
+                RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth)
+                Text(card.content)
+            } else {
+                RoundedRectangle(cornerRadius: self.cornerRadius).fill(Color.secondary)
+            }
+        }
+        .font(Font.system(size: min(size.width, size.height) * iconFontScaleFactor))
     }
 }
 

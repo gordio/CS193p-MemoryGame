@@ -12,7 +12,8 @@ import Foundation
 let emoji = ["🥶", "😎", "🤬", "👻", "😈", "🤢"].shuffled()
 
 
-class EmojiMemoryGame {
+class EmojiMemoryGame: ObservableObject {
+    @Published
     private var model = MemoryGame<String>(numberOfCards: emoji.count) {index in emoji[index]}
 
     // MARK: - Access to the Model
