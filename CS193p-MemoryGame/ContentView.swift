@@ -16,11 +16,11 @@ struct ContentView: View {
             ForEach(gameViewModel.cards) {card in
                 CardView(card: card).onTapGesture {
                     self.gameViewModel.choose(card: card)
-                }
+                }.padding(5)
             }
+            .padding(10)
+            .foregroundColor(.secondary)
         }
-        .padding()
-        .foregroundColor(.secondary)
     }
 }
 
@@ -29,7 +29,7 @@ struct CardView: View {
 
     let cornerRadius: CGFloat = 10
     let edgeLineWidth: CGFloat = 2
-    let iconFontScaleFactor: CGFloat = 0.6
+    let iconFontScaleFactor: CGFloat = 0.66
 
     var body: some View {
         GeometryReader(content: {geometry in
@@ -44,7 +44,9 @@ struct CardView: View {
                 RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth)
                 Text(card.content)
             } else {
-                RoundedRectangle(cornerRadius: self.cornerRadius).fill(Color.secondary)
+                if !card.isMatched {
+                    RoundedRectangle(cornerRadius: self.cornerRadius).fill(Color.secondary)
+                }
             }
         }
         .font(Font.system(size: min(size.width, size.height) * iconFontScaleFactor))
