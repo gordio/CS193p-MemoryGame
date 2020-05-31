@@ -13,13 +13,28 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            ForEach(gameViewModel.cards) {card in
-                CardView(card: card).onTapGesture {
-                    self.gameViewModel.choose(card: card)
-                }.padding(5)
+            HStack {
+                Text("Score: \(gameViewModel.score)")
+                Button (action: {self.gameViewModel.restart()}) {
+                    Text("Restart")
+                }
+            }.padding(.top)
+            if gameViewModel.gameOver {
+                VStack {
+                    Text("Game over").font(.title).padding()
+                    Button (action: {self.gameViewModel.restart()}) {
+                        Text("New game")
+                    }
+                }
+            } else {
+                Grid(gameViewModel.cards) {card in
+                    CardView(card: card).onTapGesture {
+                        self.gameViewModel.choose(card: card)
+                    }.padding(5)
+                }
+                .padding(10)
+                .foregroundColor(.secondary)
             }
-            .padding(10)
-            .foregroundColor(.secondary)
         }
     }
 }

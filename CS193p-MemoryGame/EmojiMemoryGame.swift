@@ -9,20 +9,58 @@
 import Foundation
 
 
-let emoji = ["🥶", "😎", "🤬", "👻", "😈", "🤢"].shuffled()
+let emoji = ["🥶", "😎", "🤬", "👻", "😈", "🤢", "😳", "😑", "😹"].shuffled()
+
+// TODO: Implement themes
+let themes = [
+    ["👻", "💀", "☠️", "🦷", "🦵🏻", "🎃"],
+    ["😓", "🤗", "🤔", "🙄", "😧", "🥱"],
+    ["🤝", "👍", "✌️", "🤘", "🖐", "☝️"],
+    ["🐙", "🦞", "🦑", "🐟", "🐡", "🐠"],
+    ["🍒", "🥑", "🥦", "🥒", "🥕", "🌶"]
+]
 
 
 class EmojiMemoryGame: ObservableObject {
     @Published
-    private var model = MemoryGame<String>(numberOfCards: emoji.count) {index in emoji[index]}
+    private var model: MemoryGame<String>?
+    @Published
+    var score = 0
+
+    var gameOver: Bool {
+        get {
+            score <= 0
+        }
+    }
+
+    init() {
+        self.restart()
+    }
+
+    func restart() {
+        score = 10
+        let randomTheme = Int.random(in: 0..<themes.count)
+        let choosenTheme = themes[randomTheme].shuffled()
+        model = MemoryGame<String>(numberOfCards: choosenTheme.count, cardContentFactory: {choosenTheme[$0]})
+
+        // FIXME: Remove old clojure on restart
+        cards.indices.forEach { self.model!.cards[$0].isFaceUp = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            self.cards.indices.forEach { self.model!.cards[$0].isFaceUp = false }
+        }
+    }
 
     // MARK: - Access to the Model
     var cards: Array<MemoryGame<String>.Card> {
-        model.cards
+        model!.cards
     }
 
     // MARK: - Intent(s)
     func choose(card: MemoryGame<String>.Card) {
-        model.choose(card: card)
+        score -= 1
+        let isMatched = model!.choose(card: card)
+        if isMatched {
+            score += 5
+        }
     }
 }

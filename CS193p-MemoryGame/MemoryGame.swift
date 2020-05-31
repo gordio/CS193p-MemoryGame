@@ -22,19 +22,22 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         }
     }
 
-    mutating func choose(card: Card) {
+    mutating func choose(card: Card) -> Bool {
+        var isMatched = false
         if let chosenIndex = cards.findFirstIndex(matching: card), !cards[chosenIndex].isFaceUp, !cards[chosenIndex].isMatched {
             if let potentialMatchIndex = indexOfFaceUpCard {
                 // Second card choosen, so check content equality
                 if cards[chosenIndex].content == cards[potentialMatchIndex].content {
                     self.cards[chosenIndex].isMatched = true
                     self.cards[potentialMatchIndex].isMatched = true
+                    isMatched = true
                 }
                 self.cards[chosenIndex].isFaceUp = true
             } else {
                 indexOfFaceUpCard = chosenIndex
             }
         }
+        return isMatched
     }
 
     init(numberOfCards: Int, cardContentFactory: (Int) -> CardContent) {
@@ -44,6 +47,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
             cards.append(Card(id: pairIndex * 2, content: content))
             cards.append(Card(id: pairIndex * 2 + 1, content: content))
         }
+        cards = cards.shuffled()
     }
 
     struct Card: Identifiable {
