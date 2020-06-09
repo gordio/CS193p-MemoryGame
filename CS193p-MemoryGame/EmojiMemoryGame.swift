@@ -11,7 +11,6 @@ import Foundation
 
 let emoji = ["🥶", "😎", "🤬", "👻", "😈", "🤢", "😳", "😑", "😹"].shuffled()
 
-// TODO: Implement themes
 let themes = [
     ["👻", "💀", "☠️", "🦷", "🦵🏻", "🎃"],
     ["😓", "🤗", "🤔", "🙄", "😧", "🥱"],
@@ -25,7 +24,9 @@ class EmojiMemoryGame: ObservableObject {
     @Published
     private var model: MemoryGame<String>?
     @Published
-    var score = 0
+    private(set) var score = 0
+    private(set) var inRestart = false
+    private let restartDelay = 1.2
 
     var gameOver: Bool {
         get {
@@ -38,6 +39,10 @@ class EmojiMemoryGame: ObservableObject {
     }
 
     func restart() {
+        if inRestart {
+            return
+        }
+        inRestart = true
         score = 10
         let randomTheme = Int.random(in: 0..<themes.count)
         let choosenTheme = themes[randomTheme].shuffled()
@@ -45,8 +50,9 @@ class EmojiMemoryGame: ObservableObject {
 
         // FIXME: Remove old clojure on restart
         cards.indices.forEach { self.model!.cards[$0].isFaceUp = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + restartDelay) {
             self.cards.indices.forEach { self.model!.cards[$0].isFaceUp = false }
+            self.inRestart = false
         }
     }
 

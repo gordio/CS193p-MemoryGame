@@ -16,7 +16,7 @@ struct ContentView: View {
             HStack {
                 Text("Score: \(gameViewModel.score)")
                 Button (action: {self.gameViewModel.restart()}) {
-                    Text("Restart")
+                    Text("Restart").disabled(gameViewModel.inRestart)
                 }
             }.padding(.top)
             if gameViewModel.gameOver {
@@ -42,8 +42,7 @@ struct ContentView: View {
 struct CardView: View {
     var card: MemoryGame<String>.Card
 
-    let cornerRadius: CGFloat = 10
-    let edgeLineWidth: CGFloat = 2
+
     let iconFontScaleFactor: CGFloat = 0.66
 
     var body: some View {
@@ -52,21 +51,30 @@ struct CardView: View {
         })
     }
 
+    @ViewBuilder
     func body(for size: CGSize) -> some View {
-        ZStack {
-            if card.isFaceUp {
-                RoundedRectangle(cornerRadius: cornerRadius).fill(Color.white)
-                RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth)
+        if card.isFaceUp || !card.isMatched {
+            ZStack {
+                Pie(
+                    startAngle: Angle.degrees(0-90),
+                    endAngle: Angle.degrees(0.001-90),
+                    clockwise: true
+                )
+                    .padding(4)
+                    .opacity(0.4)
                 Text(card.content)
-            } else {
-                if !card.isMatched {
-                    RoundedRectangle(cornerRadius: self.cornerRadius).fill(Color.secondary)
-                }
             }
+            .cardify(isFaceUp: card.isFaceUp)
+            .font(Font.system(size: min(size.width, size.height) * iconFontScaleFactor))
         }
-        .font(Font.system(size: min(size.width, size.height) * iconFontScaleFactor))
     }
 }
+
+
+
+
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
