@@ -15,7 +15,11 @@ struct ContentView: View {
         VStack {
             HStack {
                 Text("Score: \(gameViewModel.score)")
-                Button (action: {self.gameViewModel.restart()}) {
+                Button (action: {
+                    withAnimation(.easeInOut) {
+                        self.gameViewModel.restart()
+                    }
+                }) {
                     Text("Restart").disabled(gameViewModel.inRestart)
                 }
             }.padding(.top)
@@ -29,7 +33,9 @@ struct ContentView: View {
             } else {
                 Grid(gameViewModel.cards) {card in
                     CardView(card: card).onTapGesture {
-                        self.gameViewModel.choose(card: card)
+                        withAnimation(.linear(duration: 0.2)) {
+                            self.gameViewModel.choose(card: card)
+                        }
                     }.padding(5)
                 }
                 .padding(10)
@@ -51,21 +57,17 @@ struct CardView: View {
         })
     }
 
+    @State private var animatedBonusRemaining: Double = 0
+
     @ViewBuilder
     func body(for size: CGSize) -> some View {
         if card.isFaceUp || !card.isMatched {
-            ZStack {
-                Pie(
-                    startAngle: Angle.degrees(0-90),
-                    endAngle: Angle.degrees(0.001-90),
-                    clockwise: true
-                )
-                    .padding(4)
-                    .opacity(0.4)
-                Text(card.content)
-            }
-            .cardify(isFaceUp: card.isFaceUp)
-            .font(Font.system(size: min(size.width, size.height) * iconFontScaleFactor))
+            Text(card.content)
+                .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
+                .font(Font.system(size: min(size.width, size.height) * iconFontScaleFactor))
+                .animation(card.isMatched ? Animation.easeInOut(duration: 0.5) : .default)
+                .cardify(isFaceUp: card.isFaceUp)
+                .transition(AnyTransition.scale)
         }
     }
 }
