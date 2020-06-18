@@ -63,7 +63,7 @@ class EmojiMemoryGame: ObservableObject {
 
     // MARK: - Intent(s)
     func choose(card: MemoryGame<String>.Card) {
-        score -= 1
+        score -= card.isFaceUp ? 0 : 1
         let isMatched = model!.choose(card: card)
         if isMatched {
             score += 5
