@@ -1,5 +1,5 @@
 # CS193p-MemoryGame
-New course iOS Application Development with SwiftUI from **Stanford by Paul Hegarty**
+New course [iOS Application Development with SwiftUI](https://cs193p.sites.stanford.edu) from **Stanford by Paul Hegarty**
 
 [![Swift Version][swift-image]][swift-url]
 
@@ -9,7 +9,6 @@ New course iOS Application Development with SwiftUI from **Stanford by Paul Hega
 ## Meta
 
 [Project GitHub](https://github.com/gordio/CS193p-MemoryGame)
-
 
 [swift-image]:https://img.shields.io/badge/swift-5-green.svg
 [swift-url]: https://swift.org/
